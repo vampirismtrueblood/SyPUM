@@ -65,7 +65,7 @@
 
 			<div style='clear: both;'></div>
 			<div id="copyright">
-				&copy; <?php echo date('Y'); ?> Peter G.H. Malaty &amp; Dan Tucny. All rights reserved.
+				&copy; <?php echo date('Y'); ?> Peter G.F. Malaty &amp; Dan Tucny. All rights reserved.
 			</div>
 			<div id="runtime">
 <?php
