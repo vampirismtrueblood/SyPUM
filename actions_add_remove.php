@@ -26,7 +26,7 @@ require_once ('inc/db.php');
 
 function Redirect_dashboard($url, $permanent = false)
 {
-    header('Location: ./' . $url, true, $permanent ? 301 : 302);
+    header('Location: ./servers' . $url, true, $permanent ? 301 : 302);
 
     exit();
 }
@@ -37,22 +37,22 @@ if (isset($_GET['action']))  $Action=mysqli_real_escape_string($dblink,$_GET['ac
 if (isset($_GET['servername'])) $servername=mysqli_real_escape_string($dblink,$_GET['servername']);
 
 if($Action == 'delserver'){
-
-echo "Will del ten\n";
+$msg="You Shouldn't be deleting servers ... These are mine ;) \n";
+Redirect_dashboard("?msg=$msg",false);
 }
 
 if($Action == 'updateserver'){
-$query4="UPDATE updates set pushupdates='yes' where hostname='$servername'";
+$query4="UPDATE systems set pushupdates='yes' where hostname='$servername'";
 $dbres4=mysqli_query($dblink, $query4);
 
 }
 
 if($Action == 'cancelupdateserver'){
-$query5="UPDATE updates set pushupdates='no' where hostname='$servername'";
+$query5="UPDATE systems set pushupdates='no' where hostname='$servername'";
 $dbres5=mysqli_query($dblink, $query5);
 }
 if($Action == 'resetupdatestatus'){
-$query6="UPDATE updates set updated='no' where hostname='$servername'";
+$query6="UPDATE systems set updated='no' where hostname='$servername'";
 $dbres6=mysqli_query($dblink, $query6);
 }
 

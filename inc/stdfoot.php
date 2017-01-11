@@ -52,21 +52,6 @@
 				break;
 		}
 		echo "</span></span>\n";
-/*
-                $org = geoip_org_by_name($_SERVER["REMOTE_ADDR"]);
-                if ($org) {
-                    echo "<span class='dashbox primary-0'><h3>Org</h3><span>$org</span></span>";
-                }
-
-                $isp = geoip_isp_by_name($_SERVER["REMOTE_ADDR"]);
-                if ($isp) {
-                    echo "<span class='dashbox primary-0'><h3>ISP</h3>$isp</span>\n";
-                }
-*/
-		$country = geoip_country_name_by_name($_SERVER["REMOTE_ADDR"]);
-		if ($country) {
-			echo "<span class='dashbox primary-0'><h3>Country</h3>$country</span>\n";
-		}
 
 		echo "<span class='dashbox primary-0'><h3>Encryption</h3>";
 		if ($_SERVER["HTTPS"] = 'on') echo "Yes!"; else echo "No! :(";
@@ -80,7 +65,7 @@
 
 			<div style='clear: both;'></div>
 			<div id="copyright">
-				&copy; <?php echo date('Y'); ?> AcqICT. All rights reserved.
+				&copy; <?php echo date('Y'); ?> Peter G.H. Malaty &amp; Dan Tucny. All rights reserved.
 			</div>
 			<div id="runtime">
 <?php

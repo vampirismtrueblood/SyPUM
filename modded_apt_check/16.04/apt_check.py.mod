@@ -157,6 +157,7 @@ def run(options=None):
                     #print("skipping '%s' " % ver.VerStr)
                     continue
                 if isSecurityUpgrade(ver):
+                    print(cand_ver)
                     security_updates += 1
                     break
 

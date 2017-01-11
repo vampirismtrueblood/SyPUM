@@ -46,11 +46,12 @@ $dblink = db_connect();
 $command=$request[0];
 $Hostname=$request[1];
 $IPaddr=$request[2];
-$uburelease=$request[3];
-$PackageName=$request[4];
-$PackageVer=$request[5];
-$newPackageVer=$request[6];
-
+$Distro=$request[3];
+$Distrorelease=$request[4];
+$PackageName=$request[5];
+$PackageVer=$request[6];
+$newPackageVer=$request[7];
+$ShortDesc=$request[8];
 
 $sql="";
 // create SQL based on HTTP method
@@ -65,26 +66,28 @@ switch ($method) {
 		while ($row = mysqli_fetch_object($dbresult)) {
 		$[]=$row->packagename . $row->packageversion;
 		}
-*/		$sql="INSERT INTO systems values ('$Hostname','$IPaddr','$uburelease','$PackageName','$PackageVer')";
+*/	
+//	echo "Inserting $PackageName\n";
+	$sql="INSERT INTO systems values ('$Hostname','$IPaddr','$uburelease','$PackageName','$PackageVer', '$newPackageVer', '$ShortDesc')";
 }
   elseif($command == 'getupdates'){
 //	echo "Here\n";
-	$sql="SELECT pushupdates from updates where hostname='$Hostname'";
+	$sql="SELECT pushupdates from systems where hostname='$Hostname' AND ipaddr='$IPaddr' AND distro='$Distro' AND distrorelease='$Distrorelease'";
 //	$execquery=mysqli_query($dblink,$sql);
 }
-  elseif($command == 'flushmasterupdates'){
+  elseif($command == 'flushallpackages'){
 //      echo "Here\n";
-        $sql="DELETE FROM systems where hostname='$Hostname'";
+        $sql="DELETE FROM packages where hostname='$Hostname'";
 //      $execquery=mysqli_query($dblink,$sql);
 }
   elseif($command == 'amisubscribed'){
 //      echo "Here\n";
-        $sql="SELECT hostname FROM updates where hostname='$Hostname'";
+        $sql="SELECT hostname FROM systems where hostname='$Hostname' AND ipaddr='$IPaddr' AND distro='$Distro' AND distrorelease='$Distrorelease'";
 //      $execquery=mysqli_query($dblink,$sql);
 }
   elseif($command == 'subscribeme'){
 //      echo "Here\n";
-        $sql="INSERT INTO updates values ('$Hostname','$IPaddr','$uburelease','no','no','no',NOW())";
+        $sql="INSERT INTO systems values ('$Hostname','$IPaddr','$Distro','$Distrorelease','no','no',NOW())";
 //      $execquery=mysqli_query($dblink,$sql);
 }
   elseif($command == 'resetpacks'){
@@ -95,7 +98,7 @@ switch ($method) {
 
  elseif($command == 'resetupdatestatus'){
 //      echo "Here\n";
-        $sql="UPDATE updates set pushupdates='no', updated='yes' where hostname='$Hostname'";
+        $sql="UPDATE systems set pushupdates='no', updated='yes' where hostname='$Hostname' AND ipaddr='$IPaddr' AND distro='$Distro' AND distrorelease='$Distrorelease'";
 //      $execquery=mysqli_query($dblink,$sql);
 }
 
@@ -122,23 +125,8 @@ switch ($method) {
 }
   elseif($command == 'checkin'){
 //      echo "Here\n";
-        $sql="UPDATE updates set checkin=NOW() where hostname='$Hostname'and ipaddr='$IPaddr' and ubunturelease='$uburelease'";
+        $sql="UPDATE systems set checkin=NOW() where hostname='$Hostname' and ipaddr='$IPaddr' AND distro='$Distro' AND distrorelease='$Distrorelease'";
 //      $execquery=mysqli_query($dblink,$sql);
-}
-
-
- elseif($command == 'updatemastersecupdates'){
-//      echo "Here\n";
-	       
-//                echo "Package Doesn't exist for systemssecurity\n";
-	        $sql="INSERT INTO systemssecurity values ('$Hostname','$IPaddr','$uburelease','$PackageName','$PackageVer', '$newPackageVer')";
-//      $execquery=mysqli_query($dblink,$sql);
-
-}
- elseif($command == 'flushmastersecupdates'){
-//      echo "Here\n";
-        $sql="DELETE FROM systemssecurity where hostname='$Hostname'";
-//      $execquery=mysqlipushupdatesquery($dblink,$sql);
 }
 
 
@@ -161,10 +149,42 @@ break;
   case 'POST':
 if($command == 'logfile'){
 	$LogFile=file_get_contents("/var/www/uploads/$request[1]");
-        $sql="INSERT INTO systemstransactionlogs values ('$Hostname','$IPaddr','$uburelease',NOW(),'$LogFile')";
+        $sql="INSERT INTO systemstransactionlogs values ('$Hostname','$IPaddr','$Distrorelease',NOW(),'$LogFile')";
 //      $execquery=mysqli_query($dblink,$sql);
 }
-break;	   
+elseif($command == 'allupdates'){
+$allupdatesFile=file("/var/www/uploads/$Hostname");
+//print_r($allsecupdatesFile);
+	$type='bug';
+        foreach($allupdatesFile as $lineinfo){
+        list($packname,$oldver,$newver,$shrtdesc)=explode('@@@@',$lineinfo);
+//      echo "Package: $packname, Oldver: $oldver, New: $newver, SHRTDESC: $shrtdesc\n";
+        $sql="INSERT INTO packages values ('$Hostname','$packname','$oldver','$newver','$shrtdesc','$type')";                 
+        $execquery1=mysqli_query($dblink,$sql);
+        }
+
+
+
+}
+
+elseif($command == 'allsecupdates'){
+$allsecupdatesFile=file("/var/www/uploads/$Hostname");
+//print_r($allsecupdatesFile);
+	$type='sec';
+	foreach($allsecupdatesFile as $lineinfo){
+	list($packname,$oldver,$newver,$shrtdesc)=explode('@@@@',$lineinfo);
+//	echo "Type: $type and Distro: $Distro and Release: $Distrorelease\n";
+//	echo "Package: $packname, Oldver: $oldver, New: $newver, SHRTDESC: $shrtdesc\n";
+	$sql="INSERT INTO packages values ('$Hostname','$packname','$oldver','$newver','$shrtdesc','$type')";	
+	$execquery2=mysqli_query($dblink,$sql);
+	}
+
+
+
+
+}
+break;
+
 case 'PUT':
     $sql = "insert into `$table` set $set"; break;
   case 'DELETE':
@@ -174,8 +194,9 @@ case 'PUT':
 //echo "SQL: $sql\n";
 // excecute SQL statement
 //$result = mysqli_query($link,$sql);
-$execquery=mysqli_query($dblink,$sql);
-if(!$execquery) echo "Error ... " . mysqli_error($dblink) . "\n";
+if($command != 'allsecupdates' && $command != 'allupdates') $execquery=mysqli_query($dblink,$sql);
+//$execquery=mysqli_query($dblink,$sql);
+if(($command != 'allsecupdates' && $command != 'allupdates') && !$execquery ) echo "Error ..................................... " . mysqli_error($dblink) . "\n";
  /*	switch ($command) {
 
 			case 'status':

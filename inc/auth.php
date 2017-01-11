@@ -180,7 +180,7 @@ if (!isset($_SESSION['loggedin']) && isset($_POST['user']) && isset($_POST['pass
 		} else {
 //		        if (in_array('cn=webusers,cn=groups,cn=accounts,dc=peter,dc=loc', $attrs['memberOf'])) {
 //			print_r($attrs);
-			if (in_array('cn=admins,cn=groups,cn=accounts,dc=peter,dc=loc', $attrs['memberOf'])) {
+			if (in_array('cn=sypum,cn=groups,cn=accounts,dc=peter,dc=loc', $attrs['memberOf'])) {
 				if (isset($attrs['displayName'][0])) $displayname = $attrs['displayName'][0]; else $displayname = '';
 				if (isset($attrs['mail'][0])) $mail = $attrs['mail'][0]; else $mail = '';
 				$_SESSION['loggedin'] = TRUE;

@@ -22,9 +22,13 @@
     along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-
-$pathparts = explode('/', $_SERVER['PATH_INFO']);
+if (isset($_SERVER['PATH_INFO'])) {
+	$pathparts = explode('/', $_SERVER['PATH_INFO']);
+} elseif (isset($_SERVER['REDIRECT_PATH_INFO'])) {
+	$pathparts = explode('/', $_SERVER['REDIRECT_PATH_INFO']);
+} else {
+	$pathparts = array();
+}
 if (isset($pathparts[1])) {
 	$section = $pathparts[1];
 } else {
@@ -36,15 +40,22 @@ if (isset($pathparts[2])) {
 } else {
 	$page = '';
 }
+
 require_once 'inc/stdhead.php';
 
 switch ($section) {
+	case 'servers':
+		require 'inc/pages/servers.php';
+		break;
+	case 'packages':
+		require 'inc/pages/packages.php';
+		break;
 	case '':
 	default:
 		require 'inc/pages/dashboard.php';
 		break;
 }
 
-
 require_once 'inc/stdfoot.php';
+
 ?>

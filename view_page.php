@@ -40,26 +40,46 @@ if($Action == 'viewallpkgs'){
 echo "<div class='contentbox'>\n";
 echo "<h2>List of Pkgs to be updated on $servername</h2>";
 echo "<div class='content'>\n";
-                $dbquery = "SELECT packagename FROM systems where hostname='$servername';";
+                $dbquery = "SELECT packagename,oldpackageversion,newpackageversion,shortdesc FROM packages where hostname='$servername' AND packtype='bug';";
                 $dbresult = mysqli_query($dblink, $dbquery);
+		$dbquery2 = "select packagename,oldpackageversion,newpackageversion,shortdesc from packages where hostname='$servername' AND packtype='sec';";
+                $dbresult2 = mysqli_query($dblink, $dbquery2);
+		 $tmparr1=array();
+
+                                        while ($row2 = mysqli_fetch_object($dbresult)) {
+						$entry=$row2->packagename . "@@@" . $row2->oldpackageversion . "@@@" . $row2->newpackageversion . "@@@" . $row2->shortdesc;
+                                                if(!in_array($entry,$tmparr1)) $tmparr1[]=$entry; else continue;
+                                        }
+                                        while ($row2 = mysqli_fetch_object($dbresult2)) {
+						$entry=$row2->packagename . "@@@" . $row2->oldpackageversion . "@@@" . $row2->newpackageversion . "@@@" . $row2->shortdesc;
+                                                if(!in_array($entry,$tmparr1)) $tmparr1[]=$entry; else continue;
+                                        }
+sort($tmparr1);
 echo "<table>\n";
-                echo "<tr><td>Package</td><td>Is Sec pkg?</td><td>Short Sec Desc</td></tr><br/>\n";
-                if ($dbresult && mysqli_num_rows($dbresult)) {
-                        while ($row = mysqli_fetch_object($dbresult)) {
-				 $dbquery2 = "select packagename from systemssecurity where hostname='$servername' and packagename='$row->packagename'";
-                                $dbresult2 = mysqli_query($dblink, $dbquery2);
-				if ($dbresult && mysqli_num_rows($dbresult2)) $security='yes'; else $security='no';
+                echo "<tr><td>Package</td><td>Curr Ver</td><td>Latest Ver</td><td>Is Sec pkg?</td><td>Short Desc</td></tr><br/>\n";
+                if (($dbresult && mysqli_num_rows($dbresult)) || ($dbresult2 &&  mysqli_num_rows($dbresult2))) {
+                        foreach($tmparr1 as $apackage){
+				$tmp999=explode('@@@',$apackage);
+				$Packname=$tmp999[0];
+				$Packvername=$tmp999[1];
+				$NewPackvername=$tmp999[2];
+				$Shortdesc=$tmp999[3];
+					
+				 $dbquery9 = "select packagename from packages where hostname='$servername' and packagename='$Packname' and packtype='sec'";
+                                $dbresult9 = mysqli_query($dblink, $dbquery9);
+					$tmp9=mysqli_fetch_row($dbresult9); 
+				if (count($tmp9) > 0) $security='yes'; else $security='no';
 	if($security == 'yes'){
-	 echo "<tr><td>$row->packagename</td><td>Yes</td></tr>\n";
+	 echo "<tr><td>$Packname</td><td>$Packvername</td><td>$NewPackvername</td><td>Yes</td><td>$Shortdesc</td></tr>\n";
 }else{
-	echo "<tr><td>$row->packagename</td><td>No</td></tr>\n";
+	echo "<tr><td>$Packname</td><td>$Packvername</td><td>$NewPackvername</td><td>No</td><td>$Shortdesc</td></tr>\n";
 }
 
 
 }
 }
 else {
-                        echo "No servers found... You could add one...\n";
+                        echo "No Packages here to display\n";
                 }
 
 echo"</table>";
@@ -73,7 +93,7 @@ echo "<h2>List of Errata for host $servername</h2>";
 echo "<div class='content'>\n";
 $uburel_tmp=explode('.',$Ubureleasever);
 $uburel=$uburel_tmp[0];
-                $dbquery = "select ss.newpackageversion,ss.oldpackageversion,ubp.details,ubp.swdesc,ubp.packagename,ubp.packagever from ubparser as ubp LEFT JOIN systemssecurity as ss ON ss.packagename=ubp.packagename where ss.hostname='$servername' and ubp.releasever like 'Ubuntu $Ubureleasever%' and ubp.packagever = ss.newpackageversion;";
+                $dbquery = "select ss.newpackageversion,ss.oldpackageversion,ubp.details,ubp.swdesc,ubp.packagename,ubp.packagever from ubparser as ubp LEFT JOIN packages as ss ON ss.packagename=ubp.packagename where ss.hostname='$servername' and ubp.releasever like 'Ubuntu $Ubureleasever%' and ubp.packagever = ss.newpackageversion order by ubp.packagename ASC;";
                 $dbresult = mysqli_query($dblink, $dbquery);
 echo "<table>\n";
                 echo "<tr><td>Package</td><td>Curr Ver</td><td>latest Ver</td><td>Short Desc</td><td>Details</td></tr><br/>\n";
@@ -84,7 +104,7 @@ echo "<table>\n";
 }
 }
 else {
-                        echo "No servers found... You could add one...\n";
+                        echo "Either No security packages available for this host, or No security errata found...\n";
                 }
 
 echo"</table>";
@@ -96,7 +116,7 @@ if($Action == 'transactionlog'){
 echo "<div class='contentbox'>\n";
 echo "<h2>Transaction Logs for host $servername</h2>";
 echo "<div class='content'>\n";
-                $dbquery = "SELECT datelog FROM systemstransactionlogs where hostname='$servername'";
+                $dbquery = "SELECT datelog FROM systemstransactionlogs where hostname='$servername' order by datelog DESC";
                 $dbresult = mysqli_query($dblink, $dbquery);
 echo "<table>\n";
                 echo "<tr><td>Transaction Date/time</td><td>View</td></tr><br/>\n";
@@ -107,7 +127,7 @@ echo "<td><a class='red button' href='view_page.php?action=viewtranslogdate&serv
 }
 }
 else {
-                        echo "No servers found... You could add one...\n";
+                        echo "No Transactions found ... Make some \n";
                 }
 
 echo"</table>";
@@ -132,7 +152,7 @@ echo "<table>\n";
 }
 }
 else {
-                        echo "No servers found... You could add one...\n";
+                        echo "No Transactions found yet...\n";
                 }
 
 echo"</table>";
