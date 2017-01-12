@@ -34,7 +34,8 @@ $dblink=db_connect();
 $servername=mysqli_real_escape_string($dblink,$_GET['servername']);
 $Action=mysqli_real_escape_string($dblink,$_GET['action']);
 $Ubureleasever=mysqli_real_escape_string($dblink,$_GET['ubureleasever']);
-
+$Packagename=mysqli_real_escape_string($dblink,$_GET['packagename']);
+$pktype=mysqli_real_escape_string($dblink,$_GET['pktype']);
 //echo "<h1>Host $servername</h1>";
 if($Action == 'viewallpkgs'){
 echo "<div class='contentbox'>\n";
@@ -153,6 +154,31 @@ echo "<table>\n";
 }
 else {
                         echo "No Transactions found yet...\n";
+                }
+
+echo"</table>";
+echo "</div>\n";
+echo "</div>\n";
+}
+
+if($Action == 'viewsrvspkg'){
+echo "<div class='contentbox'>\n";
+echo "<h2>List of Servers affected by $Packagename</h2>";
+echo "<div class='content'>\n";
+$uburel_tmp=explode('.',$Ubureleasever);
+$uburel=$uburel_tmp[0];
+                $dbquery = "select hostname,oldpackageversion from packages where packagename='$Packagename' and packtype='$pktype' group by hostname ASC;";
+                $dbresult = mysqli_query($dblink, $dbquery);
+echo "<table>\n";
+                echo "<tr><td>Server</td><td>Curr Ver</td></tr><br/>\n";
+                if ($dbresult && mysqli_num_rows($dbresult)) {
+                        while ($row = mysqli_fetch_object($dbresult)) {
+                  echo "<tr><td>$row->hostname</td><td>$row->oldpackageversion</td></tr>\n";
+//		echo "<tr><td>$row->packagename</td><td>$row->oldpackageversion</td><td>$row->newpackageversion</td><td>$row->swdesc</td><td>$row->details</td></tr>\n";
+}
+}
+else {
+                        echo "Either No security packages available for this host, or No security errata found...\n";
                 }
 
 echo"</table>";
