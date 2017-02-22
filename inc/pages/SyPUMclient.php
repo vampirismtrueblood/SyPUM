@@ -5,7 +5,7 @@ ignore_user_abort(true);
 set_time_limit(0); // disable the time limit for this script
 
 $_GET['download_file']='test.txt';
-$File='test.txt';
+$File='SyPUMclient';
 
 $path = $_SERVER["DOCUMENT_ROOT"] . "/inc/pages/Downloads/"; // change the path to fit your websites document structure
 
