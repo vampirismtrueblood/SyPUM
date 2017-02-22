@@ -293,12 +293,12 @@ if(isset($_SESSION['loggedin']) && $_SESSION['expired'] == TRUE) {
 	require 'inc/stdfoot.php';
 	exit(0);
 }
-
+if (substr($section, -3) != 'csv') {
 echo "<div class='status'>\n";
 echo "\t<h2>Info &amp; Status</h2>\n";
 echo "\t<p>You are logged in as $displayname (" . $_SESSION['user'] . ")</p>\n";
 if ($_SESSION['admin']) echo "\t<p>You have admin level access to this application</p>\n";
 echo "\t<form method='post' name='logoutform' style='display: inline-block'><button class='sig1 button' type='submit' name='action' value='logoff'>Logout?</button></form><a class='sig1 button' href='" . $_SERVER['PHP_SELF'] . "'>Refresh?</a><br />\n";
 echo "</div>\n";
-?>
+}
 

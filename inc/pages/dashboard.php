@@ -43,16 +43,16 @@ if(isset($_GET['msg'])) echo $_GET['msg'];
 //		$dbquery = "SELECT count(distinct hostname) FROM systems;";
 		$dbquery = "SELECT count(distinct hostname) FROM systems where hostname NOT IN (SELECT distinct hostname from packages where packtype='sec')";
 		$dbresult = mysqli_query($dblink, $dbquery);
-		list($servercount) = mysqli_fetch_row($dbresult);
-		echo "<a href='/servers/withbugs' class='dashbox secondary-1-0'><h3>Servers with non-security updates</h3><span class='count'>$servercount</span></a>";
+		list($serverupdcount) = mysqli_fetch_row($dbresult);
+		echo "<a href='/servers/withbugs' class='dashbox secondary-1-0'><h3>Servers with non-security updates</h3><span class='count'>$serverupdcount</span></a>";
 
 		// Servers with security updates
 		$dbquery = "SELECT count(distinct hostname) FROM packages where packtype='sec';";
 		$dbresult = mysqli_query($dblink, $dbquery);
-		list($servercount) = mysqli_fetch_row($dbresult);
-		echo "<a href='/servers/withbugsandupdates' class='dashbox red'><h3>Servers with security updates</h3><span class='count'>$servercount</span></a>";
+		list($serverseccount) = mysqli_fetch_row($dbresult);
+		echo "<a href='/servers/withbugsandupdates' class='dashbox red'><h3>Servers with security updates</h3><span class='count'>$serverseccount</span></a>";
 
-		// Servers with security updates
+		// Servers that haven't checked in recently
 		$dbquery = "SELECT count(distinct hostname) FROM systems where checkin <= now() - INTERVAL 1 DAY;";
 		$dbresult = mysqli_query($dblink, $dbquery);
 		list($servercount) = mysqli_fetch_row($dbresult);
@@ -114,7 +114,16 @@ if(isset($_GET['msg'])) echo $_GET['msg'];
                                         "startDuration": 1,
                                         "fontFamily": "Sans",
                                         "categoryAxis": {
-                                                "gridPosition": "start"
+                                                "gridPosition": "start",
+						"autoGridCount": false,
+						"gridCount": 1000,
+						"listeners": [{
+      							"event": "clickItem",
+						      "method": function(event) {
+						        window.location.href = event.serialDataItem.dataContext.url;
+						      }
+						    }]
+						
                                         },
                                         "trendLines": [],
                                         "graphs": [
@@ -140,7 +149,7 @@ if(isset($_GET['msg'])) echo $_GET['msg'];
                                                 {
                                                         "id": "ValueAxis-1",
                                                         "stackType": "regular",
-                                                        "title": "Number of updates"
+                                                        "title": "Number of updates",
                                                 }
                                         ],
                                         "allLabels": [],
@@ -163,7 +172,7 @@ if(isset($_GET['msg'])) echo $_GET['msg'];
                                 }
                         );
                 </script>
- <div id="chartdiv" style="width: 100%; height: 400px; background-color: #FFFFFF;" ></div>
+ <div id="chartdiv" style="width: 100%; height: <?php echo (($serverupdcount + $serverseccount) * 30) + 80; ?>px ; background-color: #FFFFFF;" ></div>
 
                 </div>
         </div>

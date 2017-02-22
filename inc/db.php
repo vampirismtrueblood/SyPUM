@@ -36,4 +36,3 @@ function db_connect() {
 	return $dblink;
 }
 
-?>
