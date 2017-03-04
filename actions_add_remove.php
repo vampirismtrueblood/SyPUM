@@ -19,46 +19,48 @@
 
     You should have received a copy of the GNU General Public License
     along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-
+ */
 require_once ('inc/db.php');
 
-function Redirect_dashboard($url, $permanent = false)
-{
-    header('Location: ./servers' . $url, true, $permanent ? 301 : 302);
-
-    exit();
+function Redirect_Servers ($server, $permanent = false) {
+        header('Location: /servers/' . $server, true, $permanent ? 301 : 302);
+        exit();
 }
 
 $dblink = db_connect();
-$Action='';
-if (isset($_GET['action']))  $Action=mysqli_real_escape_string($dblink,$_GET['action']);
+$action='';
+$page=$_GET['mypage'];
+if (isset($_GET['action']))  $action=mysqli_real_escape_string($dblink,$_GET['action']);
 if (isset($_GET['servername'])) $servername=mysqli_real_escape_string($dblink,$_GET['servername']);
 
-if($Action == 'delserver'){
-$msg="You Shouldn't be deleting servers ... These are mine ;) \n";
-Redirect_dashboard("?msg=$msg",false);
+switch ($action) {
+	case 'delserver':
+		$msg="The server $servername is now deleted, IF CLIENT IS STILL ACTIVE IT WILL COME BACK ON AGAIN FOR SECURITY!!!!\n";
+		$query = "DELETE FROM systems WHERE systems.hostname='$servername';";
+		$dbres = mysqli_query($dblink, $query);
+
+		Redirect_dashboard("?msg=$msg",false);
+		break;
+	case 'updateserver':
+		$query = "UPDATE systems set pushupdates='yes' where hostname='$servername'";
+		$dbres = mysqli_query($dblink, $query);
+		break;
+	case 'cancelupdateserver':
+		$query = "UPDATE systems set pushupdates='no' where hostname='$servername'";
+		$dbres = mysqli_query($dblink, $query);
+		break;
+	case 'resetupdatestatus':
+		$query = "UPDATE systems set updated='no' where hostname='$servername'";
+		$dbres = mysqli_query($dblink, $query);
+		break
+	default:
+		
 }
 
-if($Action == 'updateserver'){
-$query4="UPDATE systems set pushupdates='yes' where hostname='$servername'";
-$dbres4=mysqli_query($dblink, $query4);
-
-}
-
-if($Action == 'cancelupdateserver'){
-$query5="UPDATE systems set pushupdates='no' where hostname='$servername'";
-$dbres5=mysqli_query($dblink, $query5);
-}
-if($Action == 'resetupdatestatus'){
-$query6="UPDATE systems set updated='no' where hostname='$servername'";
-$dbres6=mysqli_query($dblink, $query6);
+if (isset($_GET['page']) && $_GET['page'] == 'serverdetails') {
+	Redirect_dashboard("$servername",false);
+} else {
+	Redirect_dashboard("",false);
 }
 
 
-Redirect_dashboard('',false);
-
-
-
-?>
