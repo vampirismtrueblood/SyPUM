@@ -21,7 +21,6 @@
     along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 function ldapping($host, $port=389, $timeout=1) {
         $fsh = @fsockopen($host, $port, $errno, $errstr, $timeout);
         if (!$fsh) {
@@ -40,13 +39,12 @@ function ldapconnect() {
 	$requiretls = TRUE;
 	$forceldaps = FALSE;
 
-	// Domain can be forced here in the event gethostname doesn't include the domain
+	// Domain can be forced here in the event gethostname doesn't include the domain or you need to force a different domain
 	//global $domain;
 	//$domain = 'acqict.xyz';
 
 	// Get our hostname and domain name
 	$hostname = gethostname();
-	$domain='peter.loc';
 	if (!isset($domain)) {
 		global $domain;
 		$domain = substr($hostname, strpos($hostname, '.') + 1);
@@ -102,6 +100,7 @@ function ldapconnect() {
 		$conn = ldap_connect($proto . '://' . $ldapserver['target'] . ':' . $port);
 		if ($conn){
 			ldap_set_option($conn, LDAP_OPT_PROTOCOL_VERSION, 3);
+			if ($msad) ldap_set_option($conn, LDAP_OPT_REFERRALS, FALSE);
 			if ($attempttls && $proto != 'ldaps') {
 				// Enabling TLS on connection
 				if (!@ldap_start_tls($conn)) {
@@ -178,9 +177,7 @@ if (!isset($_SESSION['loggedin']) && isset($_POST['user']) && isset($_POST['pass
 			$_SESSION['auth_user'] = $auth_user;
 			$_SESSION['expired'] = TRUE;
 		} else {
-//		        if (in_array('cn=webusers,cn=groups,cn=accounts,dc=peter,dc=loc', $attrs['memberOf'])) {
-//			print_r($attrs);
-			if (in_array('cn=sypum,cn=groups,cn=accounts,dc=peter,dc=loc', $attrs['memberOf'])) {
+			if (in_array('cn=sypum,' . $groupsuffix, $attrs['memberOf'])) {
 				if (isset($attrs['displayName'][0])) $displayname = $attrs['displayName'][0]; else $displayname = '';
 				if (isset($attrs['mail'][0])) $mail = $attrs['mail'][0]; else $mail = '';
 				$_SESSION['loggedin'] = TRUE;
@@ -294,11 +291,11 @@ if(isset($_SESSION['loggedin']) && $_SESSION['expired'] == TRUE) {
 	exit(0);
 }
 if (substr($section, -3) != 'csv') {
-echo "<div class='status'>\n";
-echo "\t<h2>Info &amp; Status</h2>\n";
-echo "\t<p>You are logged in as $displayname (" . $_SESSION['user'] . ")</p>\n";
-if ($_SESSION['admin']) echo "\t<p>You have admin level access to this application</p>\n";
-echo "\t<form method='post' name='logoutform' style='display: inline-block'><button class='sig1 button' type='submit' name='action' value='logoff'>Logout?</button></form><a class='sig1 button' href='" . $_SERVER['PHP_SELF'] . "'>Refresh?</a><br />\n";
-echo "</div>\n";
+	echo "<div class='status'>\n";
+	echo "\t<h2>Info &amp; Status</h2>\n";
+	echo "\t<p>You are logged in as $displayname (" . $_SESSION['user'] . ")</p>\n";
+	if ($_SESSION['admin']) echo "\t<p>You have admin level access to this application</p>\n";
+	echo "\t<form method='post' name='logoutform' style='display: inline-block'><button class='sig1 button' type='submit' name='action' value='logoff'>Logout?</button></form><a class='sig1 button' href='" . $_SERVER['PHP_SELF'] . "'>Refresh?</a><br />\n";
+	echo "</div>\n";
 }
 
