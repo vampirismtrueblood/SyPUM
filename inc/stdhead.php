@@ -32,6 +32,10 @@
 				<a href='/'><img alt='PMSpider' src='/img/pmSpider.png' height='100px' width='280px'></a><span style='font-size:3em;'>SyPUM</span>
 				<?php if ($_SERVER['SERVER_NAME'] == 'man.peter.lan') echo "<span style='font-size:3em;color:red;'>DEV</span>"; ?>
 			</div>
+			<div style='float: left; line-height:100px;'>
+				<a href='/' style='text-decoration:none;'><h1 style='font-size:4em;' class='sig1inv'>SyPUM</h1></a>
+			</div>
+
 <?php
 // Project SyPUM - Systems Package Update Management
 //
@@ -66,17 +70,6 @@ require_once 'inc/auth.php';
 
 if ($section != '') {
 	echo "<div style='clear: both;'></div>\n";
-	
-/*
-	echo "<a class='button sig1' href='/'>My Dashboard</a>";
-	echo "<a class='button sig1' href='/dns'>DNS</a>";
-	echo "<a class='button sig1' href='/'>Shell</a>";
-	echo "<a class='button sig1' href='/'>Voice/Video</a>";
-	echo "<a class='button sig1' href='/'>IPv6</a>";
-	echo "<a class='button sig1' href='/'>Web Hosting</a>";
-	echo "<a class='button sig1' href='/tools'>Tools</a>";
-*/
-
 }
 ?>
 		</header>
