@@ -5,7 +5,7 @@ ignore_user_abort(true);
 set_time_limit(0); // disable the time limit for this script
 
 $_GET['download_file']='test.txt';
-$File='SyPUMclient.sh';
+$File='sypumclientcron';
 
 $path = $_SERVER["DOCUMENT_ROOT"] . "/inc/pages/Downloads/"; // change the path to fit your websites document structure
  
@@ -18,16 +18,15 @@ if ($fd = fopen ($fullPath, "r")) {
 	$path_parts = pathinfo($fullPath);
 	$ext = strtolower($path_parts["extension"]);
 	switch ($ext) {
-		case "sh":
+		case "":
 			header("Content-type: application/octet-stream");
-			header("Content-Disposition: attachment; filename=\"SyPUMclient.sh\""); // use 'attachment' to force a file download
-//			echo "kkkkkkkkkkkkkkkkkkkkkkkk : $File\n";
+			header("Content-Disposition: attachment; filename=sypumclientcron"); // use 'attachment' to force a file download
 			break;
 			// add more headers for other content types here
 		default:
 			header("Content-type: application/octet-stream");
-			header("Content-Disposition: filename=\"SyPUMclient.sh\"");
-//			echo "kkkkkkkkkkkkkkkkkkkkkkkk : $File\n";
+                        header("Content-Disposition: attachment; filename=sypumclientcron"); // use 'attachment' to force a file download
+
 			break;
 	}
 	header("Content-length: $fsize");
