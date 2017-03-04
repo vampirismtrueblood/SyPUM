@@ -1,0 +1,3 @@
+[submodule "ext/fa"]
+	path = ext/fa
+	url = https://github.com/FortAwesome/Font-Awesome.git
