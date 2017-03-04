@@ -21,63 +21,72 @@
     You should have received a copy of the GNU General Public License
     along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 */
-
 if (isset($_SERVER['PATH_INFO'])) {
-        $pathparts = explode('/', $_SERVER['PATH_INFO']);
+	$pathparts = explode('/', $_SERVER['PATH_INFO']); 
 } elseif (isset($_SERVER['REDIRECT_PATH_INFO'])) {
-        $pathparts = explode('/', $_SERVER['REDIRECT_PATH_INFO']);
+	$pathparts = explode('/', $_SERVER['REDIRECT_PATH_INFO']); 
 } else {
-        $pathparts = array();
+	$pathparts = array(); 
 }
 if (isset($pathparts[1])) {
-        $section = $pathparts[1];
+	$section = $pathparts[1];
 } else {
-        $section = '';
+	$section = '';
 }
 
 if (isset($pathparts[2])) {
-        $page = $pathparts[2];
+	$page = $pathparts[2];
 } else {
-        $page = '';
+	$page = '';
 }
 
 if ($section == "SyPUMclient") {
-        require 'inc/pages/SyPUMclient.php';
+	require 'inc/pages/SyPUMclient.php';
+	exit;
+}
+
+if ($section == "SyPUMcron") {
+        require 'inc/pages/SyPUMcron.php';
         exit;
 }
 
-if (substr($section, -3) != 'csv') { // If we aren't outputting CSV, display nice headers etc...
-        require_once 'inc/stdhead.php';
-} else { // If we are outputting CSV, we don't want our pretty headers, but, we still need to access our session, do auth and prep the DB
-        session_start();
-        session_cache_limiter('nocache');
-        $cache_limiter = session_cache_limiter();
 
-        $startts = microtime(TRUE);
-        require_once 'inc/db.php';
-        require_once 'inc/auth.php';
+if (substr($section, -3) != 'csv') { // If we aren't outputting CSV, display nice headers etc...
+	require_once 'inc/stdhead.php';
+} else { // If we are outputting CSV, we don't want our pretty headers, but, we still need to access our session, do auth and prep the DB
+	session_start();
+	session_cache_limiter('nocache');
+	$cache_limiter = session_cache_limiter();
+
+	$startts = microtime(TRUE);
+	require_once 'inc/db.php';
+	require_once 'inc/auth.php';
 }
 //echo "Server info" . $_SERVER['PATH_INFO'] . "\n";
 switch ($section) {
-        case 'servers':
-        case 'serverscsv':
-                require 'inc/pages/servers.php';
-                break;
-        case 'packages':
-                require 'inc/pages/packages.php';
-                break;
-        case 'SyPUMclient':
-                require 'inc/pages/SyPUMclient.php';
+	case 'servers':
+	case 'serverscsv':
+		require 'inc/pages/servers.php';
+		break;
+	case 'packages':
+		require 'inc/pages/packages.php';
+		break;
+	case 'SyPUMclient':
+		require 'inc/pages/SyPUMclient.php';
+		break;
+	case 'SyPUMcron':
+                require 'inc/pages/SyPUMcron.php';
                 break;
 
-        case '':
-        default:
-                require 'inc/pages/dashboard.php';
-                break;
+
+	case '':
+	default:
+		require 'inc/pages/dashboard.php';
+		break;
 }
 
 if (substr($section, -3) != 'csv') {
-        require_once 'inc/stdfoot.php';
+	require_once 'inc/stdfoot.php';
 }
 
 ?>
