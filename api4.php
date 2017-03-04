@@ -25,6 +25,8 @@
 // get the HTTP method, path and body of the request
 include('inc/db.php');
 
+$Latest_client_ver="3.8";
+
 
 
 $method = $_SERVER['REQUEST_METHOD'];
@@ -68,13 +70,20 @@ switch ($method) {
 		}
 */	
 //	echo "Inserting $PackageName\n";
-	$sql="INSERT INTO systems values ('$Hostname','$IPaddr','$uburelease','$PackageName','$PackageVer', '$newPackageVer', '$ShortDesc')";
+	$sql="INSERT INTO systems values ('$Hostname','$IPaddr','$uburelease','$PackageName','$PackageVer', '$newPackageVer', '$ShortDesc','NO','NO')";
 }
   elseif($command == 'getupdates'){
 //	echo "Here\n";
 	$sql="SELECT pushupdates from systems where hostname='$Hostname' AND ipaddr='$IPaddr' AND distro='$Distro' AND distrorelease='$Distrorelease'";
 //	$execquery=mysqli_query($dblink,$sql);
 }
+
+  elseif($command == 'isbanned'){
+//	echo "Here\n";
+	$sql="SELECT isbanned from systems where hostname='$Hostname' AND ipaddr='$IPaddr' AND distro='$Distro' AND distrorelease='$Distrorelease'";
+//	$execquery=mysqli_query($dblink,$sql);
+}
+
   elseif($command == 'flushallpackages'){
 //      echo "Here\n";
         $sql="DELETE FROM packages where hostname='$Hostname'";
@@ -87,12 +96,7 @@ switch ($method) {
 }
   elseif($command == 'subscribeme'){
 //      echo "Here\n";
-        $sql="INSERT INTO systems values ('$Hostname','$IPaddr','$Distro','$Distrorelease','no','no',NOW())";
-//      $execquery=mysqli_query($dblink,$sql);
-}
-  elseif($command == 'resetpacks'){
-//      echo "Here\n";
-        $sql="UPDATE updates set resetpacks='yes' where hostname='$Hostname'";
+        $sql="INSERT INTO systems values ('$Hostname','$IPaddr','$Distro','$Distrorelease','no','no',NOW(),'NO','NO')";
 //      $execquery=mysqli_query($dblink,$sql);
 }
 
@@ -130,7 +134,17 @@ switch ($method) {
 }
 
 
+ elseif($command == 'rebootreq'){
+//      echo "Here\n";
+        $sql="UPDATE systems set rebootreq='$PackageName' where hostname='$Hostname' and ipaddr='$IPaddr' AND distro='$Distro' AND distrorelease='$Distrorelease'";
+//      $execquery=mysqli_query($dblink,$sql);
+}
 
+elseif($command == 'clientver'){
+//      echo "Here\n";
+        echo $Latest_client_ver;
+//      $execquery=mysqli_query($dblink,$sql);
+}
 
 
 
@@ -194,9 +208,9 @@ case 'PUT':
 //echo "SQL: $sql\n";
 // excecute SQL statement
 //$result = mysqli_query($link,$sql);
-if($command != 'allsecupdates' && $command != 'allupdates') $execquery=mysqli_query($dblink,$sql);
+if($command != 'allsecupdates' && $command != 'allupdates' && $command != 'clientver') $execquery=mysqli_query($dblink,$sql);
 //$execquery=mysqli_query($dblink,$sql);
-if(($command != 'allsecupdates' && $command != 'allupdates') && !$execquery ) echo "Error ..................................... " . mysqli_error($dblink) . "\n";
+if(($command != 'allsecupdates' && $command != 'allupdates' && $command != 'clientver') && !$execquery ) echo "Error ..................................... " . mysqli_error($dblink) . "\n";
  /*	switch ($command) {
 
 			case 'status':
