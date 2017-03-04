@@ -139,6 +139,10 @@ p {
 	width:100%;
 }
 
+.contentbox .content th {
+	text-align: left;
+}
+
 .contentbox .content tr:nth-child(odd) {
         background-color: #f2f2f2;
 }
@@ -274,6 +278,10 @@ button {
         color: #0081C6;
 }
 
+.sig1inv {
+	color: #0081C6;
+}
+
 .red {
         background: #ed1c24;
         color: #ffffff;
@@ -318,6 +326,19 @@ button {
         background: #ffffff;
 }
 
+.brown {
+        background: #993366;
+        color: #ffffff;
+        border-color: #41A317;
+        border-width: 1px;
+        border-style: solid;
+}
+
+.brown:hover, .brown:focus, .brown:active {
+        color: #993366;
+        background: #ffffff;
+}
+
 .blue {
         background: #0000ff;
         color: #ffffff;
@@ -335,17 +356,39 @@ button {
 	color: #B66300!important;
 }
 
+.warninginv {
+	color: #fff;
+	background: #B66300!important;
+}
+
 .bad {
 	color: #ed1c24!important;
+}
+.badinv {
+	color: #fff;
+	background: #ed1c24!important;
 }
 
 .critical {
 	color: white;
 	background: black;
 }
+.critical:hover, .critical:focus {
+        color: black;
+        background: #ffffff;
+}
+
+.critical:active {
+        background: #ffffff;
+        color: black;
+}
 
 .good {
         color: green;
+}
+.goodinv {
+	color: #fff;
+	background: green;
 }
 
 div#copyright {
@@ -411,12 +454,3 @@ footer {
 .complement-3:hover, .complement-3:focus, .complement-3:active { color: #E97E00; background-color: #FFFFFF; border-color: #E97E00; }
 .complement-4:hover, .complement-4:focus, .complement-4:active { color: #B66300; background-color: #FFFFFF; border-color: #B66300; }
 
-.sig1:hover, .sig1:focus {
-        color: #0081C6;
-        background: #ffffff;
-}
-
-.sig1:active {
-        color: #0081C6;
-        background: #ffffff;
-}
