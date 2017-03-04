@@ -1,4 +1,10 @@
 <?php
+session_start();
+session_cache_limiter('nocache');
+$cache_limiter = session_cache_limiter();
+
+if (!isset($_SESSION['loggedin'])) exit();
+
 require_once 'inc/db.php';
 $dblink = db_connect();
 // Packages with updates

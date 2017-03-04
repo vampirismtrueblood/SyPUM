@@ -20,6 +20,12 @@
     You should have received a copy of the GNU General Public License
     along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  */
+session_start();
+session_cache_limiter('nocache');
+$cache_limiter = session_cache_limiter();
+
+if (!isset($_SESSION['loggedin'])) exit();
+
 require_once ('inc/db.php');
 
 function Redirect_Servers ($server, $permanent = false) {
